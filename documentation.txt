@@ -1,0 +1,5 @@
+** QMS - Queue Management System
+
+Admin Login details
+Email = admin@gmail.com
+Password: admin@1

@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap");
+
+body {
+  background-color: rgba(128, 128, 128, 0.445);
+}
+
+#inner-section {
+  font-family: "Dancing Script", cursive;
+}
+
+/* Navbar For Admin Pages Start */
+.navigation_section {
+  background-color: #b4acacab;
+  padding: 15px 0 15px 0;
+  text-align: center;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.navigation_section > .container > div > a {
+  color: #518071;
+  transition: all 0.2s;
+}
+.navigation_section > .container > div > a:hover {
+  border-bottom: 2px solid #00c896;
+}
+.navigation_section > .container > div > a > i {
+  color: #00c896;
+}
+.active {
+  border-bottom: 2px solid #00c896;
+}
+/* Navbar For Admin Pages End */
+
+/* Modified Navbar For Doctor and Nurse Pages */
+#modified_navigation_section > a {
+  color: #aca7cb;
+  transition: all 0.2s;
+}
+#modified_navigation_section > a:hover {
+  border-bottom: 2px solid #00c896;
+}
+#modified_navigation_section > a > i {
+  color: #00c896;
+}
+.active {
+  border-bottom: 2px solid #00c896;
+}
