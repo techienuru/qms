@@ -47,3 +47,8 @@ body {
 .active {
   border-bottom: 2px solid #00c896;
 }
+
+.form-control:focus {
+  border: none;
+  box-shadow: 0px 0px 3px #00c896;
+}

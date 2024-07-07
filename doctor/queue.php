@@ -3,17 +3,16 @@ session_start();
 include "../includes/connect.php";
 include "../includes/classes.php";
 
-$object = new nurse_patient($connect);
+$object = new doctor_queue($connect);
 
-if (isset($_SESSION["nurse_id"])) {
-    $user_id = $_SESSION["nurse_id"];
+if (isset($_SESSION["doctor_id"])) {
+    $user_id = $_SESSION["doctor_id"];
     $object->collectUserDetail($user_id);
 
-    // If Nurse add a patient (i.e cicks on "submit" button)
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        $object->collectInputs();
-        if (!$object->checkIfEmailExist()) {
-            $object->insertIntoDB();
+    // If a patient is called in (i.e if the doctor clicks "call" button)
+    if (isset($_GET["queue_id"])) {
+        if (!$object->checkIfSomeoneIsCalled()) {
+            $object->processcallPatient();
         }
     }
 } else {
@@ -36,7 +35,7 @@ if (isset($_SESSION["nurse_id"])) {
     <meta name="author" content="" />
     <link rel="shortcut icon" href="../images/favicon.png" type="" />
 
-    <title>QMS - Add new Patient</title>
+    <title>QMS - Awaiting patients for consultation</title>
 
     <!-- bootstrap core css -->
     <link rel="stylesheet" type="text/css" href="../Bootstrap/bootstrap.css" />
@@ -113,14 +112,14 @@ if (isset($_SESSION["nurse_id"])) {
                             Dashboard
                         </a>
 
-                        <a href="./patient.php" class="d-flex flex-column justify-content-center align-items-center active">
+                        <a href="./queue.php" class="d-flex flex-column justify-content-center align-items-center active">
                             <i class="fa fa-user" aria-hidden="true"></i>
-                            Patient
+                            Queue
                         </a>
 
-                        <a href="./consultation.php" class="d-flex flex-column justify-content-center align-items-center">
+                        <a href="./consultations.php" class="d-flex flex-column justify-content-center align-items-center">
                             <i class="fa fa-stethoscope" aria-hidden="true"></i>
-                            Consultation
+                            Consultations
                         </a>
                     </div>
 
@@ -143,44 +142,37 @@ if (isset($_SESSION["nurse_id"])) {
     <div class="container-fluid pt-4 px-4 mb-5" id="inner-section">
         <div class="text-center rounded p-4">
 
-            <div class="container w-100">
-                <button class="float-end btn text-white mb-3" data-bs-toggle="modal" data-bs-target="#add-patient" title="Add new patient" style="background-color: #00c896;">+ Add Patient</button>
-
-                <table class="table table-striped">
+            <div class="container w-100 mb-5">
+                <h3 class="text-center mb-3">Patients In Queue</h3>
+                <table class="table table-striped table-hover">
                     <div class="table-responsive">
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Queue Id</th>
                                 <th>Patient Name</th>
-                                <th>Gender</th>
-                                <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Date of Birth</th>
-                                <th>Home address</th>
+                                <th>Reason for visit</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            $sql = $object->selectPatients();
+                            $sql = $object->selectQueue();
                             $number = 1;
                             while ($result = $sql->fetch_assoc()) {
+                                $queue_id = $result["queue_id"];
                                 $patient_fullname = $result["patient_fullname"];
-                                $patient_email = $result["patient_email"];
-                                $patient_phone_no = $result["patient_phone_no"];
-                                $patient_dob = $result["patient_dob"];
-                                $patient_address = $result["patient_address"];
-                                $patient_gender = $result["patient_gender"];
-
+                                $reason = $result["reason"];
                                 echo '
                                     <tr>
                                         <td>' . $number . '</td>
+                                        <td>' . $queue_id . '</td>
                                         <td>' . $patient_fullname . '</td>
-                                        <td>' . $patient_gender . '</td>
-                                        <td>' . $patient_email . '</td>
-                                        <td>' . $patient_phone_no . '</td>
-                                        <td>' . $patient_dob . '</td>
-                                        <td>' . $patient_address . '</td>
-                                    </tr>
+                                        <td>' . $reason . '</td>
+                                        <td>
+                                            <a href="queue.php?queue_id=' . $queue_id . '" class="btn text-white js-call-patient" title="Call Patient" style="background-color:#00c896;">Call</a>
+                                        </td>
+                                    </tr>  
                                 ';
                                 $number++;
                             }
@@ -189,55 +181,6 @@ if (isset($_SESSION["nurse_id"])) {
                     </div>
                 </table>
             </div>
-
-            <!-- Add Patient Modal Start -->
-            <div class="modal fade" id="add-patient">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Add New Patient</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
-                                <div class="form-group mb-3">
-                                    <input type="text" class="form-control" name="fullname" id="title" placeholder="Enter fullname" required>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <input type="email" class="form-control" name="email" id="author" placeholder="Ex: example@gmail.com" required>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <input type="number" class="form-control" name="phone_number" placeholder="Ex: 08012345678" required>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <input type="date" class="form-control" name="dob" id="author" placeholder="Ex: example@gmail.com" required>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <input type="text" class="form-control" name="address" id="title" placeholder="Enter address" required>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <select class="form-control" id="gender" name="gender" required>
-                                        <option value="">-- Select gender --</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-
-                                <button type="submit" name="submit" class="btn btn-primary w-100">Submit</button>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Add Patient Modal End -->
 
         </div>
     </div>
@@ -251,8 +194,18 @@ if (isset($_SESSION["nurse_id"])) {
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <!-- bootstrap js -->
     <script src="../Bootstrap/bootstrap.bundle.min.js"></script>
-    <!-- custom js -->
-    <script src="../js/custom.js"></script>
+    <script>
+        document.querySelectorAll('.js-call-patient').forEach((link) => {
+            link.addEventListener("click", (e) => {
+                let copiedLink = link.href;
+                link.href = '#';
+
+                if (confirm("You are about to call the patient in?")) {
+                    link.href = copiedLink;
+                }
+            })
+        });
+    </script>
 </body>
 
 </html>

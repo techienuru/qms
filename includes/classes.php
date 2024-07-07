@@ -374,8 +374,290 @@ class nurse
     }
 }
 
-class nurse_dashboard extends nurse
+class nurse_patient extends nurse
 {
+    public $fullname;
+    public $email;
+    public $phone_number;
+    public $dob;
+    public $address;
+    public $gender;
+
+    public function collectInputs()
+    {
+        $this->fullname = htmlspecialchars($_POST["fullname"]);
+        $this->email = htmlspecialchars($_POST["email"]);
+        $this->phone_number = htmlspecialchars($_POST["phone_number"]);
+        $this->dob = htmlspecialchars($_POST["dob"]);
+        $this->address = htmlspecialchars($_POST["address"]);
+        $this->gender = htmlspecialchars($_POST["gender"]);
+    }
+
+    public function checkIfEmailExist()
+    {
+        $sql = $this->connect->query("SELECT * FROM `patient` WHERE patient_email = '$this->email'");
+        if ($sql->num_rows > 0) {
+            $this->Message("Email already exist!", "error");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function insertIntoDB()
+    {
+        $sql = $this->connect->query("INSERT INTO `patient` (patient_fullname,patient_email,patient_phone_no,patient_dob,patient_address,patient_gender) VALUES('$this->fullname','$this->email','$this->phone_number','$this->dob','$this->address','$this->gender')");
+
+        if ($sql) {
+            $this->Message("Patient Added!", "success");
+        } else {
+            $error_message = '' . $this->connect->error;
+            $this->Message($error_message, "error");
+        }
+    }
+
+    public function Message(string $message, string $type)
+    {
+        $type = ($type === "success") ? "success" : "danger";
+        echo '
+        <div class="alert alert-' . $type . ' position-absolute top-0 end-0 js-alert">
+            ' . $message . ' 
+            <button type="button" class="btn" aria-label="Close" data-bs-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        ';
+        echo '
+            <script>
+                setInterval(()=>{
+                    let invalidCredentialElement = document.querySelector(".js-alert");
+
+                    invalidCredentialElement.style.display="none";
+                },2500);
+
+            </script>
+        ';
+    }
+
+    public function selectPatients()
+    {
+        $sql = $this->connect->query("SELECT * FROM `patient`");
+        return $sql;
+    }
+}
+
+class nurse_consultation extends nurse
+{
+    public $patient_id;
+    public $reason;
+    public $queue_id;
+
+    public function selectPatients()
+    {
+        $sql = $this->connect->query("SELECT * FROM `patient`");
+        return $sql;
+    }
+
+    public function collectInputs()
+    {
+        $this->patient_id = htmlspecialchars($_POST["patient_id"]);
+        $this->reason = htmlspecialchars($_POST["reason"]);
+    }
+
+    public function checkIfPatientIsOnQueue()
+    {
+        $sql = $this->connect->query("SELECT * FROM `consultation` WHERE patient_id = $this->patient_id AND consultation.`date_time` > CURRENT_DATE  AND status = 'On queue'");
+
+        if ($sql->num_rows > 0) {
+            $this->Message("Patient is already in queue!", "error");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function generateQueueID()
+    {
+        date_default_timezone_set("AFRICA/LAGOS");
+        $strtotime = strtotime("Now");
+        $date = date("dHs", $strtotime);
+        $this->queue_id = "CONS" . $date . $this->patient_id;
+    }
+
+    public function insertIntoDB()
+    {
+        $sql = $this->connect->query("INSERT INTO `consultation` (queue_id,patient_id,reason,status) VALUES('$this->queue_id','$this->patient_id','$this->reason','On queue')");
+
+        if ($sql) {
+            $this->Message("Consultation Booked! Queue ID: $this->queue_id", "success");
+        } else {
+            $error_message = '' . $this->connect->error;
+            $this->Message($error_message, "error");
+        }
+    }
+
+    public function Message(string $message, string $type)
+    {
+        $type = ($type === "success") ? "success" : "danger";
+        echo '
+        <div class="alert alert-' . $type . ' position-absolute top-0 end-0 js-alert">
+            ' . $message . ' 
+            <button type="button" class="btn" aria-label="Close" data-bs-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        ';
+    }
 }
 
 //NURSE PAGE CLASSES END
+
+
+//DOCTOR PAGE CLASSES START
+class doctor
+{
+    public $connect;
+    public $user_id;
+    public $firstname;
+    public $lastname;
+    public $othername;
+    public $user_email;
+    public $specialization;
+
+
+    public function __construct($connect)
+    {
+        $this->connect = $connect;
+    }
+
+    public function collectUserDetail($user_id)
+    {
+        $this->user_id = $user_id;
+
+        $sql = $this->connect->query("SELECT * FROM `users` WHERE user_id = $this->user_id");
+        $result = $sql->fetch_assoc();
+        $this->firstname = $result["firstname"];
+        $this->lastname = $result["lastname"];
+        $this->othername = $result["othername"];
+        $this->user_email = $result["email"];
+        $this->specialization = $result["specialization"];
+    }
+
+    public function redirectToLogin()
+    {
+        echo "
+            <script>
+                alert('You are yet to login!');
+                window.location.href='../login.php';
+            </script>
+        ";
+        die();
+    }
+
+    public function setUnattendedToNotattended()
+    {
+        $this->connect->query("UPDATE `consultation` SET status = 'Was not attended' WHERE consultation.`date_time` < CURRENT_DATE AND status = 'On queue'");
+    }
+}
+
+class doctor_queue extends doctor
+{
+    public $timestamp;
+
+    public function getCurrentTimestamp()
+    {
+        date_default_timezone_set("AFRICA/LAGOS");
+        $strToTime = strtotime("Now");
+        $this->timestamp = date("Y-m-d H:i:s");
+    }
+
+    public function selectQueue()
+    {
+        $this->getCurrentTimestamp();
+
+        $sql = $this->connect->query("SELECT * FROM `consultation` INNER JOIN `patient` ON `consultation`.patient_id = `patient`.patient_id WHERE consultation.`date_time` > CURRENT_DATE AND status = 'On queue'");
+        return $sql;
+    }
+
+    public function checkIfSomeoneIsCalled()
+    {
+        $sql = $this->connect->query("SELECT * FROM `consultation` INNER JOIN `patient` ON `consultation`.patient_id = `patient`.patient_id WHERE consultation.`date_time` > CURRENT_DATE AND status = 'called'");
+        if ($sql->num_rows > 0) {
+            $this->Message("A Patient is already in consultation!", "error");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function processcallPatient()
+    {
+        $queue_id = $_GET["queue_id"];
+
+        $sql = $this->connect->query("UPDATE `consultation` SET status = 'called' WHERE queue_id = '$queue_id'");
+
+        if ($sql) {
+            $this->Message("Patient can now come in!", "success");
+        } else {
+            $error_message = '' . $this->connect->error;
+            $this->Message($error_message, "error");
+        }
+    }
+
+    public function Message(string $message, string $type)
+    {
+        $type = ($type === "success") ? "success" : "danger";
+        echo '
+        <div class="alert alert-' . $type . ' position-absolute top-0 end-0 js-alert">
+            ' . $message . ' 
+            <button type="button" class="btn" aria-label="Close" data-bs-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        ';
+        echo '
+            <script>
+                setInterval(()=>{
+                    let invalidCredentialElement = document.querySelector(".js-alert");
+
+                    invalidCredentialElement.style.display="none";
+                },2500);
+
+            </script>
+        ';
+    }
+}
+
+class doctor_consultations extends doctor_queue
+{
+    public function selectQueue()
+    {
+        $this->getCurrentTimestamp();
+
+        $sql = $this->connect->query("SELECT * FROM `consultation` INNER JOIN `patient` ON `consultation`.patient_id = `patient`.patient_id WHERE consultation.`date_time` > CURRENT_DATE AND status = 'called'");
+        return $sql;
+    }
+
+    public function markPatientAsDone()
+    {
+        $queue_id = $_GET["queue_id"];
+
+        $sql = $this->connect->query("UPDATE `consultation` SET status = 'Done' WHERE queue_id = '$queue_id'");
+
+        if ($sql) {
+            $this->Message("Consultation marked as done!", "success");
+        } else {
+            $error_message = '' . $this->connect->error;
+            $this->Message($error_message, "error");
+        }
+    }
+
+    public function selectConsultations()
+    {
+        $sql = $this->connect->query("SELECT * FROM `consultation` INNER JOIN `patient` ON `consultation`.patient_id = `patient`.patient_id");
+        return $sql;
+    }
+}
+
+//DOCTOR PAGE CLASSES END

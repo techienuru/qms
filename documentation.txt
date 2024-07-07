@@ -3,3 +3,30 @@
 Admin Login details
 Email = admin@gmail.com
 Password: admin@1
+
+Consultation reason a nurse can fill 
+Routine Check-up
+Follow-up Visit
+Medication Review
+New Symptoms
+Chronic Disease Management
+Lab Test Results Review
+Referral to Specialist
+Post-surgery Follow-up
+Pain Management
+Mental Health Concerns
+Immunization/Vaccination
+Pregnancy/Pre-natal Care
+Injury Evaluation
+Preventive Care
+Health Education/Counseling
+Diagnostic Tests
+Allergies Management
+Nutritional Advice
+Physical Examination
+Blood Pressure Monitoring
+Diabetes Management
+Cardiac Care
+Respiratory Issues
+Skin Conditions
+Ear, Nose, and Throat Issues
