@@ -172,7 +172,7 @@ if (isset($_SESSION["nurse_id"])) {
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="float-start">Reason</label>
-                                    <textarea name="reason" class="form-control" placeholder="Reason for consultation...."></textarea>
+                                    <textarea name="reason" class="form-control" placeholder="Reason for consultation...." required></textarea>
                                 </div>
                                 <button type="submit" name="submit" class="btn btn-primary w-100">Book</button>
                             </form>

@@ -1,4 +1,29 @@
 <?php
+class queue_status
+{
+    public $connect;
+    public $timestamp;
+
+    public function __construct($connect)
+    {
+        $this->connect = $connect;
+    }
+
+    public function getCurrentTimestamp()
+    {
+        date_default_timezone_set("AFRICA/LAGOS");
+        $strToTime = strtotime("Now");
+        $this->timestamp = date("Y-m-d H:i:s", $strToTime);
+    }
+
+    public function selectQueue()
+    {
+        $this->getCurrentTimestamp();
+
+        $sql = $this->connect->query("SELECT * FROM `consultation` INNER JOIN `patient` ON `consultation`.patient_id = `patient`.patient_id WHERE consultation.`date_time` > CURRENT_DATE AND status = 'On queue'");
+        return $sql;
+    }
+}
 class login
 {
     public $connect;

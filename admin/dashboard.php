@@ -140,6 +140,13 @@ if (isset($_SESSION["admin_id"])) {
 
   <!-- Inner section End -->
 
+  <!-- footer section -->
+  <footer class="navigation_section">
+    <div class="container">
+
+    </div>
+  </footer>
+  <!-- footer section -->
 
   <!-- jQery -->
   <script src="../js/jquery-3.4.1.min.js"></script>
