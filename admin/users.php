@@ -3,18 +3,11 @@ session_start();
 include "../includes/connect.php";
 include "../includes/classes.php";
 
-$object = new doctor_queue($connect);
+$object = new users($connect);
 
-if (isset($_SESSION["doctor_id"])) {
-    $user_id = $_SESSION["doctor_id"];
-    $object->collectUserDetail($user_id);
-
-    // If a patient is called in (i.e if the doctor clicks "call" button)
-    if (isset($_GET["queue_id"])) {
-        if (!$object->checkIfSomeoneIsCalled()) {
-            $object->processcallPatient();
-        }
-    }
+if (isset($_SESSION["admin_id"])) {
+    $admin_id = $_SESSION["admin_id"];
+    $object->collectUserDetail($admin_id);
 } else {
     $object->redirectToLogin();
 }
@@ -35,7 +28,7 @@ if (isset($_SESSION["doctor_id"])) {
     <meta name="author" content="" />
     <link rel="shortcut icon" href="../images/favicon.png" type="" />
 
-    <title>QMS - Awaiting patients for consultation</title>
+    <title>QMS - Nurse Dashboard</title>
 
     <!-- bootstrap core css -->
     <link rel="stylesheet" type="text/css" href="../Bootstrap/bootstrap.css" />
@@ -106,27 +99,10 @@ if (isset($_SESSION["doctor_id"])) {
                         <span> QMS </span>
                     </a>
 
-                    <div class="d-flex gap-5 px-5" id="modified_navigation_section">
-                        <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center">
-                            <i class="fa fa-home" aria-hidden="true"></i>
-                            Dashboard
-                        </a>
-
-                        <a href="./queue.php" class="d-flex flex-column justify-content-center align-items-center active">
-                            <i class="fa fa-user" aria-hidden="true"></i>
-                            Queue
-                        </a>
-
-                        <a href="./consultations.php" class="d-flex flex-column justify-content-center align-items-center">
-                            <i class="fa fa-stethoscope" aria-hidden="true"></i>
-                            Consultations
-                        </a>
-                    </div>
-
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <span class="d-none d-sm-inline-flex">
-                                <?php echo $object->user_email; ?>
+                                <?php echo $object->admin_email; ?>
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
@@ -143,34 +119,46 @@ if (isset($_SESSION["doctor_id"])) {
         <div class="text-center rounded p-4">
 
             <div class="container w-100 mb-5">
-                <h3 class="text-center mb-3">Patients In Queue</h3>
-                <table class="table table-striped table-hover">
-                    <div class="table-responsive">
+                <h2 class="text-center mb-5">Authorized Users</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Queue Id</th>
-                                <th>Patient Name</th>
-                                <th>Reason for visit</th>
+                                <th>Fullname</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Specialization</th>
+                                <th>Reg. Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            $sql = $object->selectQueue();
+                            $sql = $object->selectUsers();
                             $number = 1;
                             while ($result = $sql->fetch_assoc()) {
-                                $queue_id = $result["queue_id"];
-                                $patient_fullname = $result["patient_fullname"];
-                                $reason = $result["reason"];
+                                $user_id = $result["user_id"];
+                                $firstname = $result["firstname"];
+                                $lastname = $result["lastname"];
+                                $othername = $result["othername"];
+                                $fullname = "$firstname $lastname $othername";
+                                $email = $result["email"];
+                                $role = $result["role"];
+                                $specialization = $result["specialization"] ?? "-";
+                                $date_and_time = $result["date_and_time"];
                                 echo '
                                     <tr>
                                         <td>' . $number . '</td>
-                                        <td>' . $queue_id . '</td>
-                                        <td>' . $patient_fullname . '</td>
-                                        <td>' . $reason . '</td>
+                                        <td>' . $fullname . '</td>
+                                        <td>' . $email . '</td>
+                                        <td>' . $role . '</td>
+                                        <td>' . $specialization . '</td>
+                                        <td>' . $date_and_time . '</td>
                                         <td>
-                                            <a href="queue.php?queue_id=' . $queue_id . '" class="btn text-white js-call-patient" title="Call Patient" style="background-color:#00c896;">Call</a>
+                                            <a href="delete-user.php?user_id=' . $user_id . '" class="btn btn-danger text-white js-delete-user" title="Delete User">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </a>
                                         </td>
                                     </tr>  
                                 ';
@@ -178,15 +166,41 @@ if (isset($_SESSION["doctor_id"])) {
                             }
                             ?>
                         </tbody>
-                    </div>
-                </table>
+                    </table>
+                </div>
             </div>
 
         </div>
     </div>
-
     <!-- Inner section End -->
 
+    <!-- footer section -->
+    <footer class="navigation_section">
+        <div class="container">
+            <div class="d-flex justify-content-between px-0 px-sm-5">
+                <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                    Dashboard
+                </a>
+
+                <a href="./add-doctor.php" class="d-flex flex-column justify-content-center align-items-center">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                    Add Doctor
+                </a>
+
+                <a href="./add-nurse.php" class="d-flex flex-column justify-content-center align-items-center">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                    Add Nurse
+                </a>
+
+                <a href="./users.php" class="d-flex flex-column justify-content-center align-items-center active">
+                    <i class="fa fa-users" aria-hidden="true"></i>
+                    Users
+                </a>
+            </div>
+        </div>
+    </footer>
+    <!-- footer section -->
 
     <!-- jQery -->
     <script src="../js/jquery-3.4.1.min.js"></script>
@@ -194,13 +208,14 @@ if (isset($_SESSION["doctor_id"])) {
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <!-- bootstrap js -->
     <script src="../Bootstrap/bootstrap.bundle.min.js"></script>
+    <!-- custom js -->
     <script>
-        document.querySelectorAll('.js-call-patient').forEach((link) => {
+        document.querySelectorAll('.js-delete-user').forEach((link) => {
             link.addEventListener("click", (e) => {
                 e.preventDefault();
                 const copiedLink = link.href;
 
-                if (confirm("You are about to call the patient in?")) {
+                if (confirm("This action is irreversible!")) {
                     window.location.href = `${copiedLink}`;
                 }
             })

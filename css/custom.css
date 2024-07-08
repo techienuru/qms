@@ -17,6 +17,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
+  margin: 90px 0px 0px 0px;
 }
 .navigation_section > .container > div > a {
   color: #518071;

@@ -200,26 +200,43 @@ class dashboard extends admin
     public $noOfNurses;
     public $noOfAuthorizedUsers;
     public $noOfPatientInQueue;
+    public $timestamp;
 
     public function calcNoOfDoctors()
     {
         $sql = $this->connect->query("SELECT COUNT(user_id) AS noOfDoctors FROM `users` WHERE role = 'Doctor'");
         $result = $sql->fetch_assoc();
-        $this->noOfDoctors = $result["noOfDoctors"];
+        $this->noOfDoctors = $result["noOfDoctors"] ?? 0;
     }
 
     public function calcNoOfNurses()
     {
         $sql = $this->connect->query("SELECT COUNT(user_id) AS noOfNurses FROM `users` WHERE role = 'Nurse'");
         $result = $sql->fetch_assoc();
-        $this->noOfNurses = $result["noOfNurses"];
+        $this->noOfNurses = $result["noOfNurses"] ?? 0;
     }
 
     public function calcNoOfAuthorizedUsers()
     {
         $sql = $this->connect->query("SELECT COUNT(user_id) AS noOfAuthorizedUsers FROM `users`");
         $result = $sql->fetch_assoc();
-        $this->noOfAuthorizedUsers = $result["noOfAuthorizedUsers"];
+        $this->noOfAuthorizedUsers = $result["noOfAuthorizedUsers"] ?? 0;
+    }
+
+    public function calcNoOfPatientInQueue()
+    {
+        $this->getCurrentTimestamp();
+
+        $sql = $this->connect->query("SELECT COUNT(queue_id) AS noOfPatientInQueue FROM `consultation` WHERE date_time > CURRENT_DATE AND status = 'On queue'");
+        $result = $sql->fetch_assoc();
+        $this->noOfPatientInQueue = $result["noOfPatientInQueue"] ?? 0;
+    }
+
+    public function getCurrentTimestamp()
+    {
+        date_default_timezone_set("AFRICA/LAGOS");
+        $strToTime = strtotime("Now");
+        $this->timestamp = date("Y-m-d H:i:s");
     }
 }
 
@@ -287,6 +304,7 @@ class add_doctor extends admin
                     let invalidCredentialElement = document.querySelector(".js-alert");
 
                     invalidCredentialElement.style.display="none";
+                    window.location.href="users.php";
                 },2500);
 
             </script>
@@ -352,6 +370,18 @@ class users extends admin
     {
         $sql = $this->connect->query("SELECT * FROM `users`");
         return $sql;
+    }
+
+    public function processDeleteUser()
+    {
+        if (isset($_GET["user_id"])) {
+            $user_id = $_GET["user_id"];
+            $sql = $this->connect->query("DELETE FROM `users` WHERE user_id = $user_id");
+
+            if ($sql) {
+                header("location:users.php");
+            }
+        }
     }
 }
 //ADMIN PAGE CLASSES START

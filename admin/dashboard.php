@@ -99,23 +99,6 @@ if (isset($_SESSION["admin_id"])) {
             <span> QMS </span>
           </a>
 
-          <div class="d-flex gap-5 px-5" id="modified_navigation_section">
-            <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center active">
-              <i class="fa fa-home" aria-hidden="true"></i>
-              Dashboard
-            </a>
-
-            <a href="./patient.php" class="d-flex flex-column justify-content-center align-items-center">
-              <i class="fa fa-user" aria-hidden="true"></i>
-              Patient
-            </a>
-
-            <a href="./consultation.php" class="d-flex flex-column justify-content-center align-items-center">
-              <i class="fa fa-stethoscope" aria-hidden="true"></i>
-              Consultation
-            </a>
-          </div>
-
           <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
               <span class="d-none d-sm-inline-flex">
@@ -134,6 +117,66 @@ if (isset($_SESSION["admin_id"])) {
   <!-- Inner section Start -->
   <div class="container-fluid pt-4 px-4 mb-5" id="inner-section">
     <div class="text-center rounded p-4">
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card mb-3 p-3 p-3">
+              <div class="card-body">
+                <h5 class="card-title"> Total Doctors</h5>
+                <p class="card-text">
+                  <?php
+                  $object->calcNoOfDoctors();
+                  echo $object->noOfDoctors;
+                  ?>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card mb-3 p-3 p-3">
+              <div class="card-body">
+                <h5 class="card-title"> Total Nurses</h5>
+                <p class="card-text">
+                  <?php
+                  $object->calcNoOfNurses();
+                  echo $object->noOfNurses;
+                  ?>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card mb-3 p-3 p-3">
+              <div class="card-body">
+                <h5 class="card-title"> Authorized Users</h5>
+                <p class="card-text">
+                  <?php
+                  $object->calcNoOfAuthorizedUsers();
+                  echo $object->noOfAuthorizedUsers;
+                  ?>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card mb-3 p-3 p-3">
+              <div class="card-body">
+                <h5 class="card-title"> Patients In Queue</h5>
+                <p class="card-text">
+                  <?php
+                  $object->calcNoOfPatientInQueue();
+                  echo $object->noOfPatientInQueue;
+                  ?>
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
 
     </div>
   </div>
@@ -143,7 +186,27 @@ if (isset($_SESSION["admin_id"])) {
   <!-- footer section -->
   <footer class="navigation_section">
     <div class="container">
+      <div class="d-flex justify-content-between px-0 px-sm-5">
+        <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center active">
+          <i class="fa fa-home" aria-hidden="true"></i>
+          Dashboard
+        </a>
 
+        <a href="./add-doctor.php" class="d-flex flex-column justify-content-center align-items-center">
+          <i class="fa fa-user" aria-hidden="true"></i>
+          Add Doctor
+        </a>
+
+        <a href="./add-nurse.php" class="d-flex flex-column justify-content-center align-items-center">
+          <i class="fa fa-stethoscope" aria-hidden="true"></i>
+          Add Nurse
+        </a>
+
+        <a href="./users.php" class="d-flex flex-column justify-content-center align-items-center">
+          <i class="fa fa-stethoscope" aria-hidden="true"></i>
+          Users
+        </a>
+      </div>
     </div>
   </footer>
   <!-- footer section -->
