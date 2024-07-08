@@ -55,6 +55,13 @@ if (isset($_SESSION["doctor_id"])) {
       padding: 20px;
     }
 
+    @media all and (width <=400px) {
+
+      .personal-card .card-body {
+        padding: 5px;
+      }
+    }
+
     .personal-card .card-title {
       color: #007bff;
       font-size: 24px;
@@ -100,7 +107,7 @@ if (isset($_SESSION["doctor_id"])) {
             <span> QMS </span>
           </a>
 
-          <div class="d-flex gap-5 px-5" id="modified_navigation_section">
+          <div class="d-none d-md-flex gap-5 px-5" id="modified_navigation_section">
             <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center active">
               <i class="fa fa-home" aria-hidden="true"></i>
               Dashboard
@@ -116,8 +123,21 @@ if (isset($_SESSION["doctor_id"])) {
               Consultations
             </a>
           </div>
+          <!-- Hamburger Start -->
+          <div class="d-md-none position-relative" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+            <ul class="position-absolute p-3" id="hamburger-dropdown">
+              <li><a href="./dashboard.php">Dashboard</a></li>
+              <li><a href="./queue.php">Queue</a></li>
+              <li><a href="./consultations.php">Consultations</a></li>
+              <li><a href="./logout.php">Logout</a></li>
+            </ul>
+          </div>
+          <!-- Hamburger End -->
 
-          <div class="nav-item dropdown">
+          <div class="d-none d-md-block nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
               <span class="d-none d-sm-inline-flex">
                 <?php echo $object->user_email; ?>
@@ -133,8 +153,8 @@ if (isset($_SESSION["doctor_id"])) {
   </div>
 
   <!-- Inner section Start -->
-  <div class="container-fluid pt-4 px-4 mb-5" id="inner-section">
-    <div class="text-center rounded p-4">
+  <div class="container-fluid pt-4 px-sm-4 mb-5" id="inner-section">
+    <div class="text-center rounded p-sm-4">
 
       <div class="container w-100">
         <div class="card personal-card">
@@ -157,12 +177,12 @@ if (isset($_SESSION["doctor_id"])) {
             </div>
 
             <div class="info-row">
-              <h6 class="mb-0 text-nowrap me-3">Email Address</h6>
+              <h6 class="mb-0 me-3">Email Address</h6>
               <p class="mb-0 text-sm-truncate"><?php echo $object->user_email; ?></p>
             </div>
 
             <div class="info-row">
-              <h6 class="mb-0 text-nowrap me-3">Specialization</h6>
+              <h6 class="mb-0 me-3">Specialization</h6>
               <p class="mb-0 text-sm-truncate"><?php echo $object->specialization; ?></p>
             </div>
 

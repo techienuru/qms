@@ -106,7 +106,7 @@ if (isset($_SESSION["doctor_id"])) {
                         <span> QMS </span>
                     </a>
 
-                    <div class="d-flex gap-5 px-5" id="modified_navigation_section">
+                    <div class="d-none d-md-flex gap-5 px-5" id="modified_navigation_section">
                         <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center">
                             <i class="fa fa-home" aria-hidden="true"></i>
                             Dashboard
@@ -123,7 +123,21 @@ if (isset($_SESSION["doctor_id"])) {
                         </a>
                     </div>
 
-                    <div class="nav-item dropdown">
+                    <!-- Hamburger Start -->
+                    <div class="d-md-none position-relative" id="hamburger">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <ul class="position-absolute p-3" id="hamburger-dropdown">
+                            <li><a href="./dashboard.php">Dashboard</a></li>
+                            <li><a href="./queue.php">Queue</a></li>
+                            <li><a href="./consultations.php">Consultations</a></li>
+                            <li><a href="./logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                    <!-- Hamburger End -->
+
+                    <div class="d-none d-md-block nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <span class="d-none d-sm-inline-flex">
                                 <?php echo $object->user_email; ?>
@@ -144,8 +158,8 @@ if (isset($_SESSION["doctor_id"])) {
 
             <div class="container w-100 mb-5">
                 <h3 class="text-center mb-3">Patients In Queue</h3>
-                <table class="table table-striped table-hover">
-                    <div class="table-responsive">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -178,8 +192,8 @@ if (isset($_SESSION["doctor_id"])) {
                             }
                             ?>
                         </tbody>
-                    </div>
-                </table>
+                    </table>
+                </div>
             </div>
 
         </div>
