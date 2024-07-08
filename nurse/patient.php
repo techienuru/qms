@@ -49,53 +49,6 @@ if (isset($_SESSION["nurse_id"])) {
     <link href="../css/custom.css" rel="stylesheet" />
     <!-- responsive style -->
     <link href="../css/responsive.css" rel="stylesheet" />
-
-    <style>
-        .personal-card {
-            max-width: 800px;
-            margin: 50px auto;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .personal-card .card-body {
-            padding: 20px;
-        }
-
-        .personal-card .card-title {
-            color: #007bff;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .info-row h6 {
-            color: #6c757d;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .info-row p {
-            font-size: 16px;
-            margin: 0;
-            font-weight: bold;
-            /* to make the name bold */
-        }
-
-        .truncated {
-            max-width: 180px;
-            /* Adjust the max-width as needed */
-            overflow: hidden;
-            /* text-overflow: ellipsis; */
-            white-space: wrap;
-        }
-    </style>
-
 </head>
 
 <body>
@@ -107,7 +60,7 @@ if (isset($_SESSION["nurse_id"])) {
                         <span> QMS </span>
                     </a>
 
-                    <div class="d-flex gap-5 px-5" id="modified_navigation_section">
+                    <div class="d-none d-md-flex gap-5 px-5" id="modified_navigation_section">
                         <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center">
                             <i class="fa fa-home" aria-hidden="true"></i>
                             Dashboard
@@ -124,7 +77,21 @@ if (isset($_SESSION["nurse_id"])) {
                         </a>
                     </div>
 
-                    <div class="nav-item dropdown">
+                    <!-- Hamburger Start -->
+                    <div class="d-md-none position-relative" id="hamburger">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <ul class="position-absolute p-3" id="hamburger-dropdown">
+                            <li><a href="./dashboard.php">Dashboard</a></li>
+                            <li><a href="./patient.php">Patient</a></li>
+                            <li><a href="./consultation.php">Consultation</a></li>
+                            <li><a href="./logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                    <!-- Hamburger End -->
+
+                    <div class="d-none d-md-block nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <span class="d-none d-sm-inline-flex">
                                 <?php echo $object->user_email; ?>
@@ -144,10 +111,11 @@ if (isset($_SESSION["nurse_id"])) {
         <div class="text-center rounded p-4">
 
             <div class="container w-100">
-                <button class="float-end btn text-white mb-3" data-bs-toggle="modal" data-bs-target="#add-patient" title="Add new patient" style="background-color: #00c896;">+ Add Patient</button>
-
-                <table class="table table-striped">
-                    <div class="table-responsive">
+                <div class="d-flex justify-content-end">
+                    <button class="btn text-white mb-3" data-bs-toggle="modal" data-bs-target="#add-patient" title="Add new patient" style="background-color: #00c896;">+ Add Patient</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -186,8 +154,8 @@ if (isset($_SESSION["nurse_id"])) {
                             }
                             ?>
                         </tbody>
-                    </div>
-                </table>
+                    </table>
+                </div>
             </div>
 
             <!-- Add Patient Modal Start -->

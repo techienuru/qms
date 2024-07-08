@@ -108,7 +108,7 @@ if (isset($_SESSION["nurse_id"])) {
                         <span> QMS </span>
                     </a>
 
-                    <div class="d-flex gap-5 px-5" id="modified_navigation_section">
+                    <div class="d-none d-md-flex gap-5 px-5" id="modified_navigation_section">
                         <a href="./dashboard.php" class="d-flex flex-column justify-content-center align-items-center">
                             <i class="fa fa-home" aria-hidden="true"></i>
                             Dashboard
@@ -125,7 +125,21 @@ if (isset($_SESSION["nurse_id"])) {
                         </a>
                     </div>
 
-                    <div class="nav-item dropdown">
+                    <!-- Hamburger Start -->
+                    <div class="d-md-none position-relative" id="hamburger">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <ul class="position-absolute p-3" id="hamburger-dropdown">
+                            <li><a href="./dashboard.php">Dashboard</a></li>
+                            <li><a href="./patient.php">Patient</a></li>
+                            <li><a href="./consultation.php">Consultation</a></li>
+                            <li><a href="./logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                    <!-- Hamburger End -->
+
+                    <div class="d-none d-md-block nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <span class="d-none d-sm-inline-flex">
                                 <?php echo $object->user_email; ?>

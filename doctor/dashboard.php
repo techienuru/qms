@@ -55,13 +55,6 @@ if (isset($_SESSION["doctor_id"])) {
       padding: 20px;
     }
 
-    @media all and (width <=400px) {
-
-      .personal-card .card-body {
-        padding: 5px;
-      }
-    }
-
     .personal-card .card-title {
       color: #007bff;
       font-size: 24px;
@@ -93,6 +86,13 @@ if (isset($_SESSION["doctor_id"])) {
       overflow: hidden;
       /* text-overflow: ellipsis; */
       white-space: wrap;
+    }
+
+    @media all and (width <=400px) {
+
+      .personal-card .card-body {
+        padding: 5px;
+      }
     }
   </style>
 
