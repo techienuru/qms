@@ -116,7 +116,7 @@ $object = new queue_status($connect);
     <div class="container">
       <p>
         &copy; <span id="displayYear"></span> Designed By
-        <a href="#">Ibrahim Nurudeen Shehu</a>
+        <a href="#">Yunusa Alhassan</a>
         <!-- <br /><br /> -->
         <!-- &copy; <span id="displayYear"></span> Distributed By
           <a href="https://themewagon.com/" target="_blank">ThemeWagon</a> -->

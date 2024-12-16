@@ -142,10 +142,10 @@
     <div class="container">
       <p>
         &copy; <span id="displayYear"></span> Designed By
-        <a href="#">Ibrahim Nurudeen Shehu</a>
-        <!-- <br /><br /> -->
-        <!-- &copy; <span id="displayYear"></span> Distributed By
-          <a href="https://themewagon.com/" target="_blank">ThemeWagon</a> -->
+        <a href="#">Yunusa Alhassan</a>
+        <!-- <br /><br />
+        <span id="displayYear"></span> Coded By
+        <a href="https://techienuru.com.ng" target="_blank">Ibrahim Nurudeen Shehu</a> -->
       </p>
     </div>
   </footer>
